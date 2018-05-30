@@ -1,5 +1,5 @@
 #
-#Wed May 30 18:01:05 CEST 2018
+#Wed May 30 18:04:26 CEST 2018
 owner=gvSIG association
 code=sigpacxml2csv
 java-version=j1_7
@@ -13,7 +13,7 @@ sources-url=http\://github.com/gvSIGAssociation/gvsig-desktop-scripting-sigpacxm
 web-url=
 architecture=all
 model-version=1.0.1
-categories=Formats, View
+categories=Formats
 description=Convierte un fichero XML de SIGPAC a CSV dando la opcion de cargarlo en la vista al finalizar la conversion.
 owner-url=http\://www.gvsig.com
 buildNumber=1
