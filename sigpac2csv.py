@@ -41,7 +41,7 @@ def sigpac2csv():
   i18n = ToolsLocator.getI18nManager()
   initPath = ToolsUtilLocator.getFileDialogChooserManager().getLastPath("OPEN_LAYER_FILE_CHOOSER_ID", None)
   f = openFileDialog(
-    i18n.getTranslation("Seleccione el fichero XML del SIGPAC"), 
+    i18n.getTranslation("_Select_the_SIGPAC_XML_file"), 
     initialPath=initPath.getAbsolutePath()
   )
   if f==None or len(f)==0 or f[0]==None:
@@ -51,7 +51,7 @@ def sigpac2csv():
   
   outf = os.path.splitext(xmlf)[0]+".csv"
   if os.path.exists(outf):
-    if confirmDialog(i18n.getTranslation("Ya existe el fichero CVS (%s).\n¿ Desea sobreescribirlo ?") % os.path.basename(outf))==NO:
+    if confirmDialog(i18n.getTranslation("_The_CVS_file_%s_already_existsXnlXDo_you_want_to_overwrite_itXquestionX") % os.path.basename(outf))==NO:
       return
       
   with open(getResource(__file__, xmlf), 'r') as f:
@@ -120,7 +120,7 @@ def sigpac2csv():
   if view == None:
     return
     
-  if confirmDialog(i18n.getTranslation("Creado fichero '%s'.\n¿ Desea cargarlo en la vista actual ?") % os.path.basename(outf)) == NO:
+  if confirmDialog(i18n.getTranslation("_File_%s_creaded_XnlXDo_you_want_to_load_it_in_the_current_viewXquestionX") % os.path.basename(outf)) == NO:
     return
 
   layer = loadLayer("CSV", file=outf)
