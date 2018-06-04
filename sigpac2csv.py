@@ -19,6 +19,9 @@ from gvsig.commonsdialog import NO
 
 
 
+from java.io import File
+from org.gvsig.andami import PluginsLocator
+
 def outint(f,s, last=False):
   if s==None or s.strip()=="":
     f.write("0")
@@ -123,8 +126,10 @@ def sigpac2csv():
   if confirmDialog(i18n.getTranslation("_File_%s_creaded_XnlXDo_you_want_to_load_it_in_the_current_viewXquestionX") % os.path.basename(outf)) == NO:
     return
 
-  layer = loadLayer("CSV", file=outf)
-  view.getMapContext().getLayers().addLayer(layer)
+  listfiles = (File(outf),)
+  actions = PluginsLocator.getActionInfoManager()
+  addlayer = actions.getAction("view-layer-add")
+  addlayer.execute((listfiles,))
 
 def main(*args):
   sigpac2csv()
