@@ -38,8 +38,8 @@ def selfRegister():
   i18n = ToolsLocator.getI18nManager()
   moduleId = "sigpac2csv"
   actionName = "tools-sigpac-sigpac2csv"
-  tooltip_key =  i18n.getTranslation("_Convert_SIGPAC_XML_to_CSV")
-  menu_entry = "tools/SIGPAC/_Convert_XML_to_CSV"
+  tooltip_key =  i18n.getTranslation("_Convert_SIGPAC_XML_to_gvSIG_format")
+  menu_entry = "tools/SIGPAC/_Convert_XML_to_gvSIG"
   
   extension = SIGPAC2CSVExtension()
 

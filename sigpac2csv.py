@@ -22,6 +22,29 @@ from gvsig.commonsdialog import NO
 from java.io import File
 from org.gvsig.andami import PluginsLocator
 
+from org.gvsig.fmap.geom import GeometryLocator
+from org.gvsig.fmap.geom.primitive import Polygon
+
+from gvsig import createFeatureType
+
+from gvsig.geom import D2
+from gvsig.geom import POLYGON
+
+from gvsig import createShape
+
+
+from org.gvsig.fmap.dal.feature import FeatureStore
+
+def null2empty(n):
+  if n==None:
+    return ""
+  return n
+
+def null2zero(n):
+  if n==None:
+    return 0
+  return n
+  
 def outint(f,s, last=False):
   if s==None or s.strip()=="":
     f.write("0")
@@ -40,26 +63,7 @@ def outstr(f,s, last=False):
   if not last:
     f.write("; ")
 
-def sigpac2csv():
-  i18n = ToolsLocator.getI18nManager()
-  initPath = ToolsUtilLocator.getFileDialogChooserManager().getLastPath("OPEN_LAYER_FILE_CHOOSER_ID", None)
-  f = openFileDialog(
-    i18n.getTranslation("_Select_the_SIGPAC_XML_file"), 
-    initialPath=initPath.getAbsolutePath()
-  )
-  if f==None or len(f)==0 or f[0]==None:
-    return
-  xmlf = f[0]
-  layername = os.path.splitext(os.path.basename(xmlf))[0]
-  
-  outf = os.path.splitext(xmlf)[0]+".csv"
-  if os.path.exists(outf):
-    if confirmDialog(i18n.getTranslation("_The_CVS_file_%s_already_existsXnlXDo_you_want_to_overwrite_itXquestionX") % os.path.basename(outf))==NO:
-      return
-      
-  with open(getResource(__file__, xmlf), 'r') as f:
-    xml = f.read()
-
+def convert2cvs(data, outf):
   out = open(outf,"w")
   out.write("ID_ALE:Integer; ")
   out.write("ID_EXP:Integer; ")
@@ -88,14 +92,13 @@ def sigpac2csv():
   out.write("DN_SURFACE:Double; ")
   out.write("WKT:Geometry:polygon\n")
 
-  d = xmltodic.parse(xml)
-  for linea in d["DECLARACION"]["LINEA_DECLARACION"]:
+  for linea in data["DECLARACION"]["LINEA_DECLARACION"]:
     outint(out, linea["ID_ALE"])
     outint(out, linea["ID_EXP"])
     outstr(out, linea["EXP_COD"])
     outstr(out, linea["TEX_NIF"])
     outint(out, linea["ID_CROQUIS"])
-    outint(out, linea["ID_ALE"])
+    outint(out, linea["PROV"])
     outint(out, linea["MUN_CAT"])
     outint(out, linea["AGREGADO"])
     outint(out, linea["ZONA"])
@@ -119,6 +122,112 @@ def sigpac2csv():
     out.write("\n")
   out.close()
 
+def convert2shp(data, outf):
+  featureType = createFeatureType() 
+
+  featureType.append("ID_ALE", "INTEGER")
+  featureType.append("ID_EXP", "INTEGER")
+  featureType.append("EXP_COD", "STRING", 25)
+  featureType.append("TEX_NIF", "STRING", 25)
+  featureType.append("ID_CROQUIS", "INTEGER")
+  featureType.append("PROV", "INTEGER")
+  featureType.append("MUN_CAT", "INTEGER")
+  featureType.append("AGREGADO", "INTEGER")
+  featureType.append("ZONA", "INTEGER")
+  featureType.append("POLIGONO", "INTEGER")
+  featureType.append("PARCELA", "INTEGER")
+  featureType.append("RECINTO", "INTEGER")
+  featureType.append("COD_TIP_AL", "STRING", 25)
+  featureType.append("USO", "STRING", 100)
+  featureType.append("SUPERF_DEC", "DOUBLE")
+  featureType.append("COEF_REG", "DOUBLE")
+  featureType.append("SECANO_REG", "DOUBLE")
+  featureType.append("ELEGIBILID", "DOUBLE")
+  featureType.append("FC_ALMENDR", "DOUBLE")
+  featureType.append("FC_ALGARRO", "DOUBLE")
+  featureType.append("FC_AVELLAN", "DOUBLE")
+  featureType.append("FC_NOGALES", "DOUBLE")
+  featureType.append("FC_PISTACH", "DOUBLE")
+  featureType.append("DN_SURFACE", "DOUBLE")
+  featureType.append("FC_TOTAL", "DOUBLE")
+  featureType.append("GEOMETRY", "GEOMETRY").setGeometryType(POLYGON, D2)
+  
+  shape = createShape(featureType, outf)
+
+  store = shape.getDataStore()
+  store.edit() #FeatureStore.MODE_APPEND)
+  
+  for linea in data["DECLARACION"]["LINEA_DECLARACION"]:
+    feature = store.createNewFeature()
+    feature.set("ID_ALE", null2zero(linea["ID_ALE"]))
+    feature.set("ID_EXP", null2zero(linea["ID_EXP"]))
+    feature.set("EXP_COD", null2empty(linea["EXP_COD"]))
+    feature.set("TEX_NIF", null2empty(linea["TEX_NIF"]))
+    feature.set("ID_CROQUIS", null2zero(linea["ID_CROQUIS"]))
+    feature.set("PROV", null2zero(linea["PROV"]))
+    feature.set("MUN_CAT", null2zero(linea["MUN_CAT"]))
+    feature.set("AGREGADO", null2zero(linea["AGREGADO"]))
+    feature.set("ZONA", null2zero(linea["ZONA"]))
+    feature.set("POLIGONO", null2zero(linea["POLIGONO"]))
+    feature.set("PARCELA", null2zero(linea["PARCELA"]))
+    feature.set("RECINTO", null2zero(linea["RECINTO"]))
+    feature.set("COD_TIP_AL", null2empty(linea["COD_TIPO_ALE"]))
+    feature.set("USO", null2empty(linea["USO"]))
+    feature.set("SUPERF_DEC", null2zero(linea["SUPERFICIE_DECLARADA"]))
+    feature.set("COEF_REG", null2zero(linea["COEF_REG"]))
+    feature.set("SECANO_REG", null2zero(linea["SECANO_REGADIO"]))
+    feature.set("ELEGIBILID", null2zero(linea["ELEGIBILIDAD"]))
+    feature.set("FC_ALMENDR", null2zero(linea["FC_ALMENDROS"]))
+    feature.set("FC_ALGARRO", null2zero(linea["FC_ALGARROBOS"]))
+    feature.set("FC_AVELLAN", null2zero(linea["FC_AVELLANOS"]))
+    feature.set("FC_NOGALES", null2zero(linea["FC_NOGALES"]))
+    feature.set("FC_PISTACH", null2zero(linea["FC_PISTACHOS"]))
+    feature.set("FC_TOTAL", null2zero(linea["FC_TOTAL"]))
+    feature.set("DN_SURFACE", null2zero(linea["DN_SURFACE"]))
+    feature.set("GEOMETRY", linea["WKT"])
+    store.insert(feature)
+  store.finishEditing()
+  
+
+def hasOnlyPoligons(data):
+  geometryManager = GeometryLocator.getGeometryManager()
+  for linea in data["DECLARACION"]["LINEA_DECLARACION"]:
+    geom = geometryManager.createFrom(linea["WKT"])
+    if not isinstance(geom, Polygon):
+      return False
+  return True
+
+def sigpac2csv():
+  i18n = ToolsLocator.getI18nManager()
+  initPath = ToolsUtilLocator.getFileDialogChooserManager().getLastPath("OPEN_LAYER_FILE_CHOOSER_ID", None)
+  f = openFileDialog(
+    i18n.getTranslation("_Select_the_SIGPAC_XML_file"), 
+    initialPath=initPath.getAbsolutePath()
+  )
+  if f==None or len(f)==0 or f[0]==None:
+    return
+  xmlf = f[0]
+  layername = os.path.splitext(os.path.basename(xmlf))[0]
+
+  with open(getResource(__file__, xmlf), 'r') as f:
+    xml = f.read()
+  data = xmltodic.parse(xml)
+
+  if hasOnlyPoligons(data) :
+    output = "shp"
+  else:
+    output = "csv"
+    
+  outf = os.path.splitext(xmlf)[0]+"." + output
+  if os.path.exists(outf):
+    if confirmDialog(i18n.getTranslation("_The_file_%s_already_existsXnlXDo_you_want_to_overwrite_itXquestionX") % os.path.basename(outf))==NO:
+      return
+
+  if output == "csv":
+    convert2cvs(data, outf)
+  else:
+    convert2shp(data, outf)
+  
   view = currentView()
   if view == None:
     return
