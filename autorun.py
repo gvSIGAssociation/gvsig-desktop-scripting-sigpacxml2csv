@@ -5,7 +5,7 @@ from gvsig.libs.formpanel import getResource
 
 from java.io import File
 from org.gvsig.tools import ToolsLocator
-from actions import selfRegister
+from addons.sigpacxml2csv.actions import selfRegister
 
 def main(*args):
 

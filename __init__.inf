@@ -3,7 +3,7 @@ enable = true
 
 [Unit]
 type = Script
-name = sigpac2csv
+name = __init__
 description = 
 createdBy = 
 version = 
@@ -11,5 +11,4 @@ version =
 [Script]
 main = main
 Lang = python
-enable = true
 

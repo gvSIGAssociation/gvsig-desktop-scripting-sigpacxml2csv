@@ -2,7 +2,7 @@
 
 import gvsig
 
-from sigpac2csv import sigpac2csv
+from addons.sigpacxml2csv.sigpac2csv import sigpac2csv
 
 from gvsig import currentView
 from gvsig import getResource
