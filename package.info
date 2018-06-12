@@ -1,5 +1,5 @@
 #
-#Wed May 30 18:08:04 CEST 2018
+#Tue Jun 12 14:58:07 CEST 2018
 owner=gvSIG association
 code=sigpacxml2csv
 java-version=j1_7
@@ -17,6 +17,5 @@ categories=Formats
 description=Convierte un fichero XML de SIGPAC a CSV dando la opcion de cargarlo en la vista al finalizar la conversion.
 owner-url=http\://www.gvsig.com
 buildNumber=3
-download-url=https\://github.com/gvSIGAssociation/gvsig-desktop-scripting-sigpacxml2csv/releases/download/untagged-e20863ba29556397d75c/gvSIG-desktop-2.4.0-sigpacxml2csv-1.0.0-1-testing-all-all-j1_7.gvspkg
-gvSIG-version=2.4.0
+gvSIG-version=2.4.1
 name=Tools\: SIGPAC Conversor XML a CSV
